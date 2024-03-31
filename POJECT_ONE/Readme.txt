@@ -1,0 +1,1 @@
+This project contains a blanck template of Jenkis pipeline script
