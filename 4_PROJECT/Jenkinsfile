@@ -1,0 +1,49 @@
+pipeline {
+    agent any
+    environment{
+        global_var="some_global_var"
+    }
+    parameters{
+        string(name:'person', defaultValue:'default_value_name',description:'choice parameter')
+        booleanParam(name:'isMale', defaultValue:true ,description:'Male or Female')
+        choice(name:'pcf_foundations', choices:['clwdev1','clwdev2','clwdev3'])
+        choice(name:'environment', choices:['L1','L2','L3','L4','L5','L6'])
+    }
+    stages {
+        stage('Compile') {
+            steps {
+               echo "Hello"
+            }
+        }
+        stage('Test') {
+            steps {
+                echo "Hello"
+               }
+            }
+            stage('Continue') {
+            input{
+                message "Should we continue"
+                ok "Yes we should"
+            }
+            steps {
+                echo "Hello"
+               }
+            }
+            stage('Build') {
+                environment{
+                  local_var="some_local_var"
+                }
+            steps {
+                echo "Hello"
+                // publish html
+               }
+            }
+        }
+        post{
+            always{
+                echo "finally executed"
+            }
+        }
+    }
+
+
