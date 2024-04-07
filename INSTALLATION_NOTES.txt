@@ -1,0 +1,106 @@
+
+--------------
+INSTALL JAVA
+--------------
+sudo yum install java-1.8.0-openjdk-devel -y
+
+
+
+
+
+
+--------------
+INSTALL MAVEN
+--------------
+=> wget https://dlcdn.apache.org/maven/maven-3/3.9.6/binaries/apache-maven-3.9.6-bin.tar.gz
+
+=> sudo tar xzf apache-maven-3.9.6-bin.tar.gz -C /opt
+
+=> sudo nano /etc/profile.d/maven.sh
+
+paste
+
+=> export M2_HOME=/opt/apache-maven-3.9.6
+   export PATH=${M2_HOME}/bin:${PATH}
+
+ctrl+s
+ctrl+x
+
+=> sudo chmod +x /etc/profile.d/maven.sh
+=> source /etc/profile.d/maven.sh
+
+verify
+
+mvn -version
+
+
+
+--------------
+INSTALL GRADLE
+--------------
+   bash
+   => wget https://services.gradle.org/distributions/gradle-8.5-bin.zip
+   
+   Replace x.x.x with the version number you copied.
+   
+   Extract Gradle Archive*: Once the download is complete, unzip the Gradle binary archive:
+
+   bash
+   => sudo mkdir /opt/gradle
+   => sudo unzip -d /opt/gradle gradle-8.5-bin.zip
+
+   Replace x.x.x with the version number of the Gradle distribution you downloaded.
+
+   bash
+   => nano ~/.bashrc
+
+   Add the following lines at the end of the file:
+
+   bash
+   => export PATH=$PATH:/opt/gradle/gradle-x.x.x/bin
+   
+   bash
+   => source ~/.bashrc
+
+   bash
+   => gradle -v
+
+--------------
+INSTALL GIT
+--------------
+sudo yum install git
+
+sudo yum install rh-git227
+
+sudo git config --global user.name "full name"
+sudo git config --global user.email "email_address"
+
+---------------
+INSTALL JENKINS
+---------------
+yum install fontconfig
+
+yum list available jenkins
+
+wget https://pkg.jenkins.io/redhat-stable/jenkins-2.426.1-1.1.noarch.rpm
+
+sudo yum install jenkins-2.426.1-1.1.noarch.rpm
+
+systemctl status jenkins
+systemctl start jenkins
+systemctl status jenkins
+systemctl enable jenkins
+
+
+
+
+--------------
+INSTALL DOCKER
+--------------
+
+
+
+
+-------------------
+INSTALL KUBERNATES
+-------------------
