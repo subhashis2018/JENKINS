@@ -2,12 +2,43 @@
 --------------
 INSTALL JAVA
 --------------
-sudo yum install java-1.8.0-openjdk-devel -y
+
+sudo yum install wget -y
+
+wget https://download.java.net/java/GA/jdk17/0d483333a00540d886896bac774ff48b/35/GPL/openjdk-17_linux-x64_bin.tar.gz
+
+sudo mkdir -p /usr/lib/jvm
+
+sudo tar -xzvf openjdk-17_linux-x64_bin.tar.gz -C /usr/lib/jvm
+
+sudo update-alternatives --install /usr/bin/java java /usr/lib/jvm/jdk-17/bin/java 1
+sudo update-alternatives --install /usr/bin/javac javac /usr/lib/jvm/jdk-17/bin/javac 1
+
+java -version
+
+echo 'export JAVA_HOME=/usr/lib/jvm/jdk-17' | sudo tee -a /etc/profile
+
+source /etc/profile
+
+
+export JAVA_HOME=/usr/lib/jvm/jdk-17
+export PATH=$JAVA_HOME/bin:$PATH
+
+echo $JAVA_HOME
+
+echo 'export JAVA_HOME=/usr/lib/jvm/jdk-17' >> ~/.bashrc
+echo 'export PATH=$JAVA_HOME/bin:$PATH' >> ~/.bashrc
+
+source ~/.bashrc
 
 
 
+----------------
+UNINSTALL JAVA
+----------------
+rpm -qa | grep java OR rpm -qa | grep jdk
 
-
+yum remove jdk-17 OR rpm -e jdk-17
 
 --------------
 INSTALL MAVEN
@@ -57,7 +88,7 @@ INSTALL GRADLE
    Add the following lines at the end of the file:
 
    bash
-   => export PATH=$PATH:/opt/gradle/gradle-x.x.x/bin
+   => export PATH=$PATH:/opt/gradle/gradle-8.5/bin
    
    bash
    => source ~/.bashrc
@@ -72,8 +103,8 @@ sudo yum install git
 
 sudo yum install rh-git227
 
-sudo git config --global user.name "full name"
-sudo git config --global user.email "email_address"
+sudo git config --global user.name "subhashis"
+sudo git config --global user.email "subhashis.sarangi@gmail.com"
 
 ---------------
 INSTALL JENKINS
@@ -88,17 +119,35 @@ sudo yum install jenkins-2.426.1-1.1.noarch.rpm
 
 systemctl status jenkins
 systemctl start jenkins
-systemctl status jenkins
+systemctl status jenkins
 systemctl enable jenkins
 
-
+-------------------
+UNINSTALL JENKINS
+-------------------
+sudo rm -rf /var/lib/jenkins
+sudo yum remove jenkins
 
 
 --------------
 INSTALL DOCKER
 --------------
 
+sudo yum update -y
 
+sudo yum -y install docker
+
+sudo service docker start
+
+Access Docker commands in ec2-user user
+
+sudo usermod -a -G docker ec2-user
+
+sudo chmod 666 /var/run/docker.sock
+
+docker version
+
+systemctl enable docker
 
 
 -------------------
