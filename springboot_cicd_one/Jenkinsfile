@@ -1,13 +1,15 @@
 pipeline{
     agent none
     tools {
-        maven mymaven
+        jdk 'myjava'
+        maven 'mymaven'
     }
     parameters{
           booleanParam(name:'executeTests', defaultValue: true, description:'decide to run tc')
     }
     stages{
         stage("compile"){
+            agent any
             steps{
                 echo "========compileing========"
                 sh 'git clone  https://github.com/subhashis2018/springboot_cicd_1.git'
@@ -16,6 +18,7 @@ pipeline{
             }
         }
         stage("test"){
+            agent any
             steps{
                 echo "========executing test========"
                 sh 'mvn test'
@@ -23,10 +26,12 @@ pipeline{
             post{
                 success{
                     echo "========test executed successfully========"
+                    junit 'target/surefire-reports/*.xml'
                 }
             }
         }
         stage("package"){
+            agent any
             steps{
                 echo "========packageing========"
                 sh 'mvn package'
@@ -38,6 +43,7 @@ pipeline{
             }
         }
         stage("deploy"){
+            agent any
             steps{
                 echo "========executing deploy========"
             }
