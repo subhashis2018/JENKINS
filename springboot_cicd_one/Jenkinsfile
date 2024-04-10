@@ -47,6 +47,7 @@ pipeline {
         always {
             // Clean up workspace
             cleanWs()
+            echo 'Build successful!'
         }
         
         success {

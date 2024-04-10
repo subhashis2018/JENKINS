@@ -22,7 +22,7 @@ pipeline {
             post {
                 always {
                     echo "========Always========"
-                    cleanWs()
+                   // cleanWs()
                 }
             }
         }
@@ -35,7 +35,7 @@ pipeline {
             post {
                 always {
                     echo "========Always========"
-                    cleanWs()
+                   // cleanWs()
                 }
             }
         }
@@ -47,7 +47,7 @@ pipeline {
             post {
                 always {
                     echo "========Always========"
-                    cleanWs()
+                    //cleanWs()
                 }
             }
         }
@@ -58,7 +58,7 @@ pipeline {
             post {
                 always {
                     echo "========Always========"
-                    cleanWs()
+                    //cleanWs()
                 }
             }
         }
