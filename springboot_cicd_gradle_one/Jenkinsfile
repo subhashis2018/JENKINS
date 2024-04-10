@@ -4,9 +4,6 @@ pipeline{
       gradle 'mygradle'
       jdk 'myjava'
     }
-    environment{
-
-    }
     stages{
         stage("Checkout"){
             steps{
