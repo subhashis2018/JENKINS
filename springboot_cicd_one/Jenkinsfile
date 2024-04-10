@@ -1,11 +1,16 @@
 pipeline {
     agent any
+    tools{
+        git 'mygit'
+        maven 'mymaven'
+        java 'myjava'
+    }
     
     stages {
         stage('Checkout') {
             steps {
                 // Checkout the source code from your version control system
-                git ' https://github.com/subhashis2018/springboot_cicd_1.git'
+                 git url: 'https://github.com/subhashis2018/springboot_cicd_1.git', branch: 'main'
             }
         }
         
