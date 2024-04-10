@@ -14,7 +14,8 @@ pipeline{
         stage("Compile"){
             steps{
                 echo "========Compileing========"
-               sh  'gradle clean build --stacktrace --info'
+               sh 'gradle clean build'
+               sh 'gradle --stacktrace'
             }
             post{
                 always{
@@ -31,6 +32,7 @@ pipeline{
             post{
                 always{
                     echo "========always========"
+                    cleanWs()
                 }
             }
         }
