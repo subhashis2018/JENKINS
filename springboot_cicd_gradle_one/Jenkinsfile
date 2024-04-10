@@ -5,12 +5,12 @@ pipeline {
         jdk 'myjava'
     }
     stages {
-        stage("Checkout") {
-            steps {
-                // Checkout the source code from your version control system
-                git url: 'https://github.com/subhashis2018/springboot-cicd-gradle-1.git', branch: 'main'
-            }
-        }
+        // stage("Checkout") {
+        //     steps {
+        //         // Checkout the source code from your version control system
+        //         git url: 'https://github.com/subhashis2018/springboot-cicd-gradle-2.git', branch: 'main'
+        //     }
+        // }
         stage("Compile") {
             steps {
                 echo "========Compiling========"
