@@ -15,7 +15,8 @@ pipeline {
             steps {
                 echo "========Compiling========"
                 sh 'gradle init'
-                sh 'gradle clean build'
+                sh 'gradle -d clean'
+                sh 'gradle  build --stacktrace'
                 sh 'gradle --stacktrace'
             }
             post {
