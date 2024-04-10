@@ -15,9 +15,10 @@ pipeline{
 
     stages{
         stage("compile"){
-            agent { label 'linux_slave' }
+            agent any
             steps{
                 echo "========compiling========"
+                 sh 'git clone https://github.com/subhashis2018/springboot_cicd_1.git'
                  sh 'mvn compile'
             }
         }
