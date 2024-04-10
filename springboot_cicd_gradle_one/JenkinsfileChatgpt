@@ -1,0 +1,58 @@
+pipeline {
+    agent any
+    
+    environment {
+        GRADLE_HOME = tool 'Gradle'
+    }
+    tools{
+        jdk 'myjava'
+    }
+    
+    stages {
+        // stage('Checkout') {
+        //     steps {
+        //         // Checkout the source code from your version control system
+        //         git 'https://github.com/your/repository.git'
+        //     }
+        // }
+        
+        stage('Build') {
+            steps {
+                // Build the project using Gradle
+                sh "${GRADLE_HOME}/bin/gradle clean build"
+            }
+        }
+        
+        stage('Test') {
+            steps {
+                // Run tests using Gradle
+                sh "${GRADLE_HOME}/bin/gradle test"
+            }
+        }
+        
+        stage('Package') {
+            steps {
+                // Package the application (if applicable)
+                // For example, creating a JAR file
+                sh "${GRADLE_HOME}/bin/gradle assemble"
+            }
+        }
+        
+        stage('Deploy') {
+            steps {
+                // Deploy the application (if applicable)
+                // For example, deploying to a server
+                // Add deployment steps here
+                echo "========Testing========"
+            }
+        }
+    }
+    
+    post {
+        always {
+            // Clean up workspace after the build
+            //cleanWs()
+            echo "========Testing========"
+        }
+    }
+}
