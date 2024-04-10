@@ -1,59 +1,62 @@
-pipeline{
+pipeline {
     agent any
-    tools{
-      gradle 'mygradle'
-      jdk 'myjava'
+    tools {
+        gradle 'mygradle'
+        jdk 'myjava'
     }
-    stages{
-        stage("Checkout"){
-            steps{
-                 // Checkout the source code from your version control system
-                 git url: 'https://github.com/subhashis2018/springboot-cicd-gradle-1.git', branch: 'main'
+    stages {
+        stage("Checkout") {
+            steps {
+                // Checkout the source code from your version control system
+                git url: 'https://github.com/subhashis2018/springboot-cicd-gradle-1.git', branch: 'main'
             }
         }
-        stage("Compile"){
-            steps{
-                echo "========Compileing========"
-               sh 'gradle clean build'
-               sh 'gradle --stacktrace'
+        stage("Compile") {
+            steps {
+                echo "========Compiling========"
+                sh 'gradle clean build'
+                sh 'gradle --stacktrace'
             }
-            post{
-                always{
-                    echo "========always========"
-                }
-            }
-        }
-        stage("Test"){
-            steps{
-                echo "========Testing========"
-                sh 'gradle check'
-                sh 'gradle test --continue --full-stacktrace'
-            }
-            post{
-                always{
-                    echo "========always========"
+            post {
+                always {
+                    echo "========Always========"
                     cleanWs()
                 }
             }
         }
-        stage("Package"){
-            steps{
-                echo "========Packageing========"
-                sh 'gradle projects'
+        stage("Test") {
+            steps {
+                echo "========Testing========"
+                sh 'gradle check'
+                sh 'gradle test --continue --full-stacktrace'
             }
-            post{
-                always{
-                    echo "========always========"
+            post {
+                always {
+                    echo "========Always========"
+                    cleanWs()
                 }
             }
         }
-        stage("Deploy"){
-            steps{
+        stage("Package") {
+            steps {
+                echo "========Packaging========"
+                sh 'gradle projects'
+            }
+            post {
+                always {
+                    echo "========Always========"
+                    cleanWs()
+                }
+            }
+        }
+        stage("Deploy") {
+            steps {
                 echo "========Deploying========"
             }
-            post{
-                always{
-                    echo "========always========"
+            post {
+                always {
+                    echo "========Always========"
+                    cleanWs()
                 }
             }
         }
