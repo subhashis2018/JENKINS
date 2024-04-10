@@ -1,51 +1,52 @@
 pipeline{
     agent none
-
     tools {
-        // Install the Maven version configured as "M3" and add it to the path.
-        maven 'mymaven'
+        maven mymaven
     }
-    parameters {
-        booleanParam(name:'executeTests', defaultValue: true, description:'decide to run tc')
+    parameters{
+          booleanParam(name:'executeTests', defaultValue: true, description:'decide to run tc')
     }
-
-    // environment {
-    //     PACKAGE_SERVER = 'ec2-user@172.31.7.45'
-    // }
-
     stages{
         stage("compile"){
-            agent any
             steps{
-                echo "========compiling========"
-                 sh 'git clone https://github.com/subhashis2018/springboot_cicd_1.git'
-                 sh 'mvn compile'
+                echo "========compileing========"
+                sh 'git clone  https://github.com/subhashis2018/springboot_cicd_1.git'
+                sh 'cd springboot_cicd_1'
+                sh 'mvn compile'
             }
         }
         stage("test"){
-            agent any
-            when {
-                expression {
-                    params.executeTests == true
-                }
+            steps{
+                echo "========executing test========"
+                sh 'mvn test'
             }
-            steps {
-                script {
-                    echo 'Test the code'
-                    sh 'mvn test'
+            post{
+                success{
+                    echo "========test executed successfully========"
                 }
             }
         }
         stage("package"){
-            agent any
             steps{
+                echo "========packageing========"
                 sh 'mvn package'
+            }
+            post{
+                success{
+                    echo "========package successfull========"
+                }
             }
         }
         stage("deploy"){
             steps{
-                echo "========deploying========"
+                echo "========executing deploy========"
+            }
+            post{
+                success{
+                    echo "========deployed successfully========"
+                }
             }
         }
     }
+   
 }
