@@ -11,6 +11,11 @@ pipeline {
         //         git url: 'https://github.com/subhashis2018/springboot-cicd-gradle-2.git', branch: 'main'
         //     }
         // }
+        stage("PRE_BUILD"){
+            steps{
+                sh 'gradle tasks'
+            }
+        }
         stage("Compile") {
             steps {
                 echo "========Compiling========"
@@ -30,7 +35,7 @@ pipeline {
             steps {
                 echo "========Testing========"
                 // sh 'gradle check'
-                 sh 'gradle test --continue'
+                 sh 'gradle test'
             }
             post {
                 always {
