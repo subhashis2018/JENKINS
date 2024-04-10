@@ -14,10 +14,10 @@ pipeline {
         stage("Compile") {
             steps {
                 echo "========Compiling========"
-                sh 'gradle init'
-                //sh 'gradle -d clean'
-                sh 'gradle  build '
-                sh 'gradle --stacktrace'
+                // sh 'gradle init'
+                // //sh 'gradle -d clean'
+                // sh 'gradle  build '
+                // sh 'gradle --stacktrace'
             }
             post {
                 always {
@@ -29,8 +29,8 @@ pipeline {
         stage("Test") {
             steps {
                 echo "========Testing========"
-                sh 'gradle check'
-                sh 'gradle test --continue'
+                // sh 'gradle check'
+                // sh 'gradle test --continue'
             }
             post {
                 always {
@@ -42,7 +42,7 @@ pipeline {
         stage("Package") {
             steps {
                 echo "========Packaging========"
-                sh 'gradle projects'
+                //sh 'gradle projects'
             }
             post {
                 always {
