@@ -33,6 +33,7 @@ pipeline {
             steps {
                 // Example: Deploy the built artifact to a server
                 // sh 'mvn deploy'
+                echo 'hello'
             }
         }
     }
