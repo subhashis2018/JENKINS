@@ -17,7 +17,7 @@ pipeline {
                  sh 'gradle init'
                 // //sh 'gradle -d clean'
                  sh 'gradle  build '
-                // sh 'gradle --stacktrace'
+                 sh 'gradle --stacktrace'
             }
             post {
                 always {
@@ -30,7 +30,7 @@ pipeline {
             steps {
                 echo "========Testing========"
                 // sh 'gradle check'
-                // sh 'gradle test --continue'
+                 sh 'gradle test --continue'
             }
             post {
                 always {
