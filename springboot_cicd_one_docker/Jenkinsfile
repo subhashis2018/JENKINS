@@ -30,11 +30,32 @@ pipeline {
                 sh "${MAVEN_HOME}/bin/mvn test"
             }
         }
-    }
-    
-    post {
-        always {
-            cleanWs() // Clean up workspace after build
+        
+        // stage('Docker Build') {
+        //     steps {
+        //         // Build Docker image
+        //         script {
+        //             docker.build("${DOCKER_IMAGE}")
+        //         }
+        //     }
+        // }
+        
+        // stage('Deploy') {
+        //     steps {
+        //         // Push Docker image to registry or deploy to server
+        //         script {
+        //             docker.withRegistry('https://your.registry.url', 'your_registry_credentials') {
+        //             docker.image("${DOCKER_IMAGE}").push()
+        //             }
+        //         }
+        //     }
+        }
+        post{
+            always{
+                cleanWs()
+            }
         }
     }
-}
+    
+
+
