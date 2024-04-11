@@ -1,17 +1,12 @@
 pipeline {
-    agent any
-
-    tools{
-        git 'mygit'
-        maven 'mymaven'
-        jdk  'myjava'
-    }
-    
     environment {
-        // Define environment variables
-        DOCKER_IMAGE = 'subhashis2022/springboot_cicd_1:1.0.0'
-        MAVEN_HOME = tool 'mymaven'
-        DOCKER_REGISTRY_URL=''
+        JAVA_TOOL_OPTIONS = "-Duser.home=/home/jenkins"
+    }
+    agent {
+        dockerfile {
+            label "docker"
+            args "-v /tmp/maven:/home/jenkins/.m2 -e MAVEN_CONFIG=/home/jenkins/.m2"
+        }
     }
     
     stages {
@@ -35,25 +30,6 @@ pipeline {
                 sh "${MAVEN_HOME}/bin/mvn test"
             }
         }
-        
-        // stage('Docker Build') {
-        //     steps {
-        //         // Build Docker image
-        //         script {
-        //             docker.build("${DOCKER_IMAGE}")
-        //         }
-        //     }
-        // }
-        
-        // stage('Deploy') {
-        //     steps {
-        //         // Push Docker image to registry or deploy to server
-        //         script {
-        //             docker.withRegistry('https://your.registry.url', 'your_registry_credentials') {
-        //             docker.image("${DOCKER_IMAGE}").push()
-        //             }
-        //         }
-        //     }
         }
         post{
             always{
