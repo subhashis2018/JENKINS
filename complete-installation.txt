@@ -1,0 +1,84 @@
+
+                                       *****************
+                                         UBUNTU START
+                                       *****************
+
+Install ORACLE JDK-17
+***************************
+wget https://download.oracle.com/java/17/latest/jdk-17_linux-x64_bin.deb
+sudo dpkg -i jdk-17_linux-x64_bin.deb
+nano ~/.bashrc
+export JAVA_HOME=/usr/lib/jvm/jdk-17
+export PATH=$JAVA_HOME/bin:$PATH
+source ~/.bashrc
+java -version
+
+
+
+Install JENKINS for oracle JDK-17
+*********************************
+sudo apt update
+
+sudo apt-get install fontconfig -y
+sudo apt install net-tools -y
+
+sudo journalctl -xeu jenkins.service
+
+for REDHAT distribution
+*******************************
+wget https://pkg.jenkins.io/redhat-stable/jenkins-2.426.1-1.1.noarch.rpm
+sudo apt install jenkins-2.426.1-1.1.noarch.rpm
+
+for DABIAN distribution
+***********************
+wget https://pkg.jenkins.io/debian-stable/binary/jenkins_2.426.1_all.deb
+sudo dpkg -i jenkins_2.426.1_all.deb
+sudo apt-get install -f
+sudo systemctl start jenkins
+sudo systemctl enable jenkins
+
+sudo cat /var/lib/jenkins/secrets/initialAdminPassword
+
+sudo ufw allow 8080
+sudo ufw enable
+sudo ufw status
+
+
+
+sudo apt-get install fontconfig -y
+
+
+sudo mkdir /var/lib/jenkins  // creates two separate folder for logs and home
+sudo mkdir /var/log/jenkins
+
+sudo chown -R jenkins:jenkins /var/lib/jenkins 
+sudo chown -R jenkins:jenkins /var/log/jenkins
+
+sudo journalctl -u jenkins.service -b  // to see logs
+
+
+
+
+Install GIT
+************************
+
+
+
+Install MAVEN
+***************
+
+
+Install KUBERNETES
+*******************
+
+
+Install Teraform
+*******************
+
+
+
+
+
+                                      *****************
+                                         UBUNTU  END
+                                      *****************

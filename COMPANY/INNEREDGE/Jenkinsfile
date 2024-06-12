@@ -1,0 +1,73 @@
+#!groovy
+library 'reference-pipeline'
+library 'AppServiceAccount'
+library 'CICD-FOSS-V2'
+pipeline{
+    parameters{
+        string(name:"BRANCH_NAME" , defaultValue="release",description:"Full name of the branch to build")
+        booleanParam(name:"FORTYFY_ANALYSIS",defeultValue:false,description:"Perform a fortify security scan on this project")
+    }
+    agent{
+        node{
+            label"'Docker-c0035875'
+        }
+    }
+    options{
+        buildDiscarder(logRotator(numToKeepStr:'10'))
+    }
+    tools{
+        jdk 'JAVA_17'
+    }
+    environment {
+        APPLICATION_PACKAGE = "eai3540420.com.fdxfe.cpudwv"
+        APP_NAME = 'fdxfe-exop-cpudwv-rpo-core-collector'
+        APP_VERSION = "$version"
+        APP_PAM_ID = '64847002'
+        CF_ORG = '3540420'
+        GROUP_ID = 'eai3540420.com.fdxfe.cpudwv'
+        NEXUS_CREDS_ID = '3540420_nexus'
+        NEXUS_URL_UPLOAD = 'nexus.prod.cloud.fedex.com:8443/nexus'
+        NEXUS_REPO = 'staging'
+
+        MICROSOFT_TEAMS_WEBHOOK = 'https://myfedex.webhook.office.com/webhookb2/97c46ce1-8c09-45f6-9809-94bf27165cf5@b945c813-dce6-41f8-8457-5a12c2fe15bf/IncomingWebhook/8ab77d8f3d534f16ba64e328336bd94e/f2cbbe91-8391-48c2-a5dd-82c1594796cb'
+        CPUDWV_ACTUATOR = credentials('CPUDWV-Actuator')
+        ACTUATOR_USERNAME = "${CPUDWV_ACTUATOR_USR}"
+        ACTUATOR_PASSWORD = "${CPUDWV_ACTUATOR_PSW}"
+        CPUDWV_JMS_CREDENTIALS = credentials('CPUDWV_JMS_CREDENTIALS_NON_PRD')
+
+        // CPUDWV_CASSANDRA_PEM = credentials('CPUDWV_CASSANDRA_PEM')
+
+        CPUDWV_CASSANDRA_CREDENTIALS = credentials('CPUDWV_CASSANDRA_CREDENTIALS_L3')
+        CF_APPDSPACE= "${LEVEL == "development" ? "DEVELOPMENT" : "RELEASE"}"
+        CURR_CF_API = ""
+        CF_DEV_SPACE = "development"
+        CF_RELEASE_SPACE = "release"
+        CURR_SPACE = ""
+        GRADLE_OPTS="-Dgradle.user.home=/opt/jenkins/.gradle -Dhttp.proxyHost=internet.proxy.fedex.com -Dhttp.proxyPort=3128"
+
+    }
+    stages{
+        stage('Retrieve Artifacts From Nexus'){
+            steps {
+                downloadNexusArtifact groupId: "$GROUP_ID",
+                        artifactId: "$APP_NAME", repo: "$NEXUS_REPO",
+                        release: true,
+                        version: "${env.VERSION}",
+                        extension: "jar"
+                   }
+           }
+        stage("Deploy in Regions"){
+            environment {
+                PCF_FOUNDATION = ""
+                CF_API = ""
+                CF_FOUNDATION = ""
+                CURR_CF_API = ""
+                INSTANCES_COUNT=""
+                CURR_PROFILE= ""
+            }
+           }
+           stages{
+            
+           }
+         }
+}

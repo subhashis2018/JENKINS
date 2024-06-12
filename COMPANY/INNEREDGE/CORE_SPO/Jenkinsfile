@@ -1,0 +1,275 @@
+#!groovy
+library 'reference-pipeline'
+library 'fxg-reference-pipeline'
+library 'AppServiceAccount'
+
+pipeline {
+    agent {
+        node {
+            label 'Docker-c0035875'
+        }
+    }
+    parameters {
+        string(defaultValue: 'development', description: 'What environment?', name: 'LEVEL', trim: false)
+        string(defaultValue: 'clw', description: 'select regions', name: 'Regions', trim: false)
+    }
+    options {
+        buildDiscarder(logRotator(numToKeepStr: '10'))
+    }
+    tools {
+        jdk 'JAVA_17'
+    }
+    environment {
+        APPLICATION_PACKAGE = "eai3540420.com.fdxfe.cpudwv"
+        APP_NAME = 'fdxfe-exop-cpudwv-rpo-core-collector'
+        APP_VERSION = "$version"
+        APP_PAM_ID = '64847002'
+        CF_ORG = '3540420'
+        GROUP_ID = 'eai3540420.com.fdxfe.cpudwv'
+        NEXUS_CREDS_ID = '3540420_nexus'
+        NEXUS_URL_UPLOAD = 'nexus.prod.cloud.fedex.com:8443/nexus'
+        NEXUS_REPO = 'staging'
+
+        MICROSOFT_TEAMS_WEBHOOK = 'https://myfedex.webhook.office.com/webhookb2/97c46ce1-8c09-45f6-9809-94bf27165cf5@b945c813-dce6-41f8-8457-5a12c2fe15bf/IncomingWebhook/8ab77d8f3d534f16ba64e328336bd94e/f2cbbe91-8391-48c2-a5dd-82c1594796cb'
+        CPUDWV_ACTUATOR = credentials('CPUDWV-Actuator')
+        ACTUATOR_USERNAME = "${CPUDWV_ACTUATOR_USR}"
+        ACTUATOR_PASSWORD = "${CPUDWV_ACTUATOR_PSW}"
+        CPUDWV_JMS_CREDENTIALS = credentials('CPUDWV_JMS_CREDENTIALS_NON_PRD')
+
+        // CPUDWV_CASSANDRA_PEM = credentials('CPUDWV_CASSANDRA_PEM')
+
+        CPUDWV_CASSANDRA_CREDENTIALS = credentials('CPUDWV_CASSANDRA_CREDENTIALS_L3')
+        CF_APPDSPACE= "${LEVEL == "development" ? "DEVELOPMENT" : "RELEASE"}"
+        CURR_CF_API = ""
+        CF_DEV_SPACE = "development"
+        CF_RELEASE_SPACE = "release"
+        CURR_SPACE = ""
+        GRADLE_OPTS="-Dgradle.user.home=/opt/jenkins/.gradle -Dhttp.proxyHost=internet.proxy.fedex.com -Dhttp.proxyPort=3128"
+
+    }
+
+    stages {
+        stage('Extract release from yaml') {
+            steps {
+                script {
+                    def release = readYaml file: 'release.yml'
+                    env.VERSION = release.releaseVersion
+                    env.GROUP_ID = release.nexusGroupId
+                    env.ARTIFACT_ID = release.nexusArtifactId
+                }
+            }
+        }
+        stage('Retrieve Artifacts From Nexus') {
+            steps {
+                downloadNexusArtifact groupId: "$GROUP_ID",
+                        artifactId: "$APP_NAME", repo: "$NEXUS_REPO",
+                        release: true,
+                        version: "${env.VERSION}",
+                        extension: "jar"
+            }
+        }
+        stage("Deploy in Regions"){
+            environment {
+                PCF_FOUNDATION = ""
+                CF_API = ""
+                CF_FOUNDATION = ""
+                CURR_CF_API = ""
+                INSTANCES_COUNT=""
+                CURR_PROFILE= ""
+            }
+            }
+            stages{
+                // Start of CLW CLE stages
+                stage('Deploy to CLW')
+                        {
+                            // Start of Deploy to CLW stage
+                            stages
+                                    {
+                                        // Start of CLW stages
+                                        // create service and deploy - clwdev4-az1
+                                        stage("CreateService And Deploy to clwdev4-az1")
+                                                {
+                                                    environment {
+                                                        PCF_FOUNDATION = "clwdev4-az1"
+                                                        CF_API = [https://api.sys.$%7bPCF_FOUNDATION%7d.paas.fedex.com]https://api.sys.${PCF_FOUNDATION}.paas.fedex.com
+                                                        CF_FOUNDATION = "${PCF_FOUNDATION}"
+                                                        CURR_CF_API = "${CF_API}"
+                                                        INSTANCES_COUNT="1"
+                                                        CURR_PROFILE= "releaseCLW"
+
+                                                    }
+                                                    steps
+                                                            {
+                                                                script {
+                                                                    String[] str = Regions.split(',');
+                                                                    String[] levels = LEVEL.split(',');
+                                                                    for(String level : levels){
+                                                                    println("${level}")
+                                                                        if("${level}" == "development")
+                                                                        {
+                                                                            //confirmdeployment("${level}")
+                                                                            CURR_SPACE = CF_DEV_SPACE
+                                                                        }else if("${level}" == "release"){
+                                                                            //confirmdeployment("${level}")
+                                                                            CURR_SPACE = CF_RELEASE_SPACE
+                                                                        }
+                                                                        for(String region_values : str){
+                                                                            println("${region_values}")
+                                                                            if("${region_values}" == "clw")
+                                                                            {
+                                                                                setupServicesAndDeployIntoFoundation()
+                                                                            }
+                                                                        }
+                                                                    }
+                                                                }
+                                                            }
+
+                                                }
+                                        // create service and deploy - clwdev4-az2
+                                        stage("CreateService And Deploy to clwdev4-az2 ")
+                                                {
+                                                    environment {
+                                                        PCF_FOUNDATION = "clwdev4-az2"
+                                                        CF_API = [https://api.sys.$%7bPCF_FOUNDATION%7d.paas.fedex.com]https://api.sys.${PCF_FOUNDATION}.paas.fedex.com
+                                                        CF_FOUNDATION = "${PCF_FOUNDATION}"
+                                                        CURR_CF_API = "${CF_API}"
+                                                        INSTANCES_COUNT="1"
+                                                        CURR_PROFILE= "releaseCLW"
+                                                    }
+                                                    steps
+                                                            {
+                                                                script {
+                                                                    String[] str = Regions.split(',');
+                                                                    String[] levels = LEVEL.split(',');
+                                                                    for(String level : levels){
+                                                                     println("${level}")
+                                                                        if("${level}" == "development")
+                                                                        {
+                                                                            //confirmdeployment("${level}")
+                                                                            CURR_SPACE = CF_DEV_SPACE
+                                                                        }else if("${level}" == "release"){
+                                                                            //confirmdeployment("${level}")
+                                                                            CURR_SPACE = CF_RELEASE_SPACE
+                                                                        }
+                                                                        for(String region_values : str){
+                                                                            println("${region_values}")
+                                                                            if("${region_values}" == "clw" && "${level}" == "release")
+                                                                            {
+                                                                                setupServicesAndDeployIntoFoundation()
+                                                                            }
+                                                                        }
+                                                                    }
+                                                                }
+                                                            }
+                                                }
+                                        // create service and deploy - clwdev4-az3
+                                        stage("CreateService And Deploy to clwdev4-az3")
+                                                {
+                                                    environment {
+                                                        PCF_FOUNDATION = "clwdev4-az3"
+                                                        CF_API = [https://api.sys.$%7bPCF_FOUNDATION%7d.paas.fedex.com]https://api.sys.${PCF_FOUNDATION}.paas.fedex.com
+                                                        CF_FOUNDATION = "${PCF_FOUNDATION}"
+                                                        CURR_CF_API = "${CF_API}"
+                                                        INSTANCES_COUNT="1"
+                                                        CURR_PROFILE= "releaseCLW"
+                                                    }
+                                                    steps
+                                                            {
+                                                                script {
+                                                                    String[] str = Regions.split(',');
+                                                                    String[] levels = LEVEL.split(',');
+                                                                    for(String level : levels){
+                                                                        println("${level}")
+                                                                        if("${level}" == "development")
+                                                                        {
+                                                                            //confirmdeployment("${level}")
+                                                                            CURR_SPACE = CF_DEV_SPACE
+                                                                        }else if("${level}" == "release"){
+                                                                            //confirmdeployment("${level}")
+                                                                            CURR_SPACE = CF_RELEASE_SPACE
+                                                                        }
+                                                                        for(String region_values : str){
+                                                                            println("${region_values}")
+                                                                            if("${region_values}" == "clw" && "${level}" == "release")
+                                                                            {
+                                                                                setupServicesAndDeployIntoFoundation()
+                                                                            }
+                                                                        }
+                                                                    }
+                                                                }
+                                                            }
+                                                }
+
+                                    } // end of CLW stages
+                        } // End of Deploy to CLW stage
+            } // End of CLW stages
+        } // End of in Regions
+    } //End of main stages
+    post {
+        always {
+            metricCollection(eai: "${CF_ORG}", trainName: "FIRST_LAST_MILE")
+        }
+        success {
+            office365ConnectorSend color: '#00FF00', message: "#### Jenkins successful build for '${JOB_NAME}' \n please see output URL below\n  (<'${BUILD_URL}'|Open>) ", status: "Build Success", webhookUrl: MICROSOFT_TEAMS_WEBHOOK
+        }
+        failure {
+            office365ConnectorSend color: '#FF0000', message: "#### Jenkins build failed for '${JOB_NAME}' \n please see output URL below\n  (<'${BUILD_URL}'|Open>) ", status: "Build Failure", webhookUrl: MICROSOFT_TEAMS_WEBHOOK
+        }
+    }
+}
+void setupServicesAndDeployIntoFoundation()
+{ // Start of deployInto_specificFoundation
+    executeServicesSetupForEachFoundation()
+    executeDeploymentIntoEachFoundation()
+} // End of deployInto_specificFoundation
+void executeServicesSetupForEachFoundation()
+{
+    echo "\u2705 \u2705 \u2705 Create Services \u2705 \u2705 \u2705"
+    println 'Configuring User Provided Services'
+    pcfDeploy pamId: APP_PAM_ID,
+            url: CF_API,
+            space: CURR_SPACE,
+            cfcmd: 'version'
+    sh '''#!/bin/sh
+    chmod +x cf
+    export PATH=${PATH}:${WORKSPACE}
+    currentServices=$(cf services)
+    echo ${currentServices}
+    cf service appd || cf create-service appdynamics fedex1-test appd
+    cf service autoscaler || cf create-service app-autoscaler standard autoscaler
+    cf uups fdxfe-exop-cpudwv-actuator -p '{"ACTUATOR_USERNAME":"'${CPUDWV_ACTUATOR_USR}'","ACTUATOR_PASSWORD":"'${CPUDWV_ACTUATOR_PSW}'"}' ||
+    cf cups fdxfe-exop-cpudwv-actuator -p '{"ACTUATOR_USERNAME":"'${CPUDWV_ACTUATOR_USR}'","ACTUATOR_PASSWORD":"'${CPUDWV_ACTUATOR_PSW}'"}'
+    cf uups fdxfe-exop-cpudwv-jms -p '{"JMS_USERNAME":"'${CPUDWV_JMS_CREDENTIALS_USR}'","JMS_PASSWORD":"'${CPUDWV_JMS_CREDENTIALS_PSW}'"}' ||
+    cf cups fdxfe-exop-cpudwv-jms -p '{"JMS_USERNAME":"'${CPUDWV_JMS_CREDENTIALS_USR}'","JMS_PASSWORD":"'${CPUDWV_JMS_CREDENTIALS_PSW}'"}'
+    cf uups dynamic-profile -p '{"DYNAMIC_PROFILE":"'${CURR_PROFILE}'"}' ||
+    cf cups dynamic-profile -p '{"DYNAMIC_PROFILE":"'${CURR_PROFILE}'"}'
+    cf uups fdxfe-exop-cpudwv-cassandra -p '{"CPUDWV_CASSANDRA_USERNAME":"'${CPUDWV_CASSANDRA_CREDENTIALS_USR}'","CPUDWV_CASSANDRA_PASSWORD":"'${CPUDWV_CASSANDRA_CREDENTIALS_PSW}'"}' ||
+    cf cups fdxfe-exop-cpudwv-cassandra -p '{"CPUDWV_CASSANDRA_USERNAME":"'${CPUDWV_CASSANDRA_CREDENTIALS_USR}'","CPUDWV_CASSANDRA_PASSWORD":"'${CPUDWV_CASSANDRA_CREDENTIALS_PSW}'"}'
+    echo ${currentServices}'''
+    } //End of executeServicesSetupForEachFoundation() method
+
+void executeDeploymentIntoEachFoundation(){
+    echo "\u2705 \u2705 \u2705 Deploy Services \u2705 \u2705 \u2705"
+    // Use the pcfDeploy to Authenticate and get version
+    pcfDeploy(
+            pamId: APP_PAM_ID,
+            url: CF_API,
+            space: CURR_SPACE,
+            cfcmd: '--version'
+    )
+    // Push the application to pcf
+    sh """
+    export PATH=${PATH}:${WORKSPACE}
+    cf push ${APP_NAME} -f manifest.yml -p "${APP_NAME}-${VERSION}.jar" \
+    --var space="${CURR_SPACE}" \
+    --var appDspace="${CF_APPDSPACE}" \
+    --var foundation="${CF_FOUNDATION}" \
+    --var profile="${CURR_PROFILE}" \
+    --var version="${VERSION}" \
+    --var instance="${INSTANCES_COUNT}"
+    cf set-env ${APP_NAME} "nexusVersion" "${VERSION}"
+     
+       """
+ } 
+}
+//End of executeDeploymentIntoEachFoundation() method
